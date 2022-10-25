@@ -1,13 +1,12 @@
 {
   "name": "@adaltojunior86/maplibre-gl-leaflet",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "binding from maplibre gl to the leaflet api",
   "source": "src/index.js",
   "main": "dist/main.js",
   "type": "commonjs",
   "scripts": {
-    "prepare": "install-peers",
-    "build": "parcel build "
+    "build": "parcel build"
   },
   "repository": {
     "type": "git",
@@ -26,10 +25,9 @@
     "eslint": "^8.25.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "install-peers-cli": "^2.2.0",
     "parcel": "^2.7.0"
   },
-  "peerDependencies": {
+  "dependencies": {
     "leaflet": "^1.0.0",
     "maplibre-gl": "^1.14.0"
   }
