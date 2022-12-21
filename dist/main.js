@@ -1,22 +1,8 @@
-var $gXNCa$leaflet = require("leaflet");
-var $gXNCa$maplibregl = require("maplibre-gl");
-
-function $parcel$interopDefault(a) {
-  return a && a.__esModule ? a.default : a;
-}
-function $parcel$defineInteropFlag(a) {
-  Object.defineProperty(a, '__esModule', {value: true, configurable: true});
-}
-function $parcel$export(e, n, v, s) {
-  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
-}
-
-$parcel$defineInteropFlag(module.exports);
-
-$parcel$export(module.exports, "default", () => $4fa36e821943b400$export$2e2bcd8739ae039);
+import $h6dJ7$maplibregl from "maplibre-gl";
 
 
-const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
+if (!window.L) throw new Error("You need add leaflet lib manually.");
+const $fa5ae398b166b8de$var$MapLibreGL = L.Layer.extend({
     options: {
         updateInterval: 32,
         // How much to extend the overlay view (relative to map size)
@@ -29,9 +15,9 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
         pane: "tilePane"
     },
     initialize: function(options) {
-        $gXNCa$leaflet.setOptions(this, options);
+        L.setOptions(this, options);
         // setup throttling the update event when panning
-        this._throttledUpdate = $gXNCa$leaflet.Util.throttle(this._update, this.options.updateInterval, this);
+        this._throttledUpdate = L.Util.throttle(this._update, this.options.updateInterval, this);
     },
     onAdd: function(map) {
         if (!this._container) this._initContainer();
@@ -43,10 +29,10 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
             0
         ]);
         // work around https://github.com/mapbox/mapbox-gl-leaflet/issues/47
-        if (map.options.zoomAnimation) $gXNCa$leaflet.DomEvent.on(map._proxy, $gXNCa$leaflet.DomUtil.TRANSITION_END, this._transitionEnd, this);
+        if (map.options.zoomAnimation) L.DomEvent.on(map._proxy, L.DomUtil.TRANSITION_END, this._transitionEnd, this);
     },
     onRemove: function(map) {
-        if (this._map._proxy && this._map.options.zoomAnimation) $gXNCa$leaflet.DomEvent.off(this._map._proxy, $gXNCa$leaflet.DomUtil.TRANSITION_END, this._transitionEnd, this);
+        if (this._map._proxy && this._map.options.zoomAnimation) L.DomEvent.off(this._map._proxy, L.DomUtil.TRANSITION_END, this._transitionEnd, this);
         const paneName = this.getPaneName();
         map.getPane(paneName).removeChild(this._container);
         this._glMap.remove();
@@ -74,7 +60,7 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
     getBounds: function() {
         const halfSize = this.getSize().multiplyBy(0.5);
         const center = this._map.latLngToContainerPoint(this._map.getCenter());
-        return $gXNCa$leaflet.latLngBounds(this._map.containerPointToLatLng(center.subtract(halfSize)), this._map.containerPointToLatLng(center.add(halfSize)));
+        return L.latLngBounds(this._map.containerPointToLatLng(center.subtract(halfSize)), this._map.containerPointToLatLng(center.add(halfSize)));
     },
     getContainer: function() {
         return this._container;
@@ -84,7 +70,7 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
         return this._map.getPane(this.options.pane) ? this.options.pane : "tilePane";
     },
     _initContainer: function() {
-        const container = $gXNCa$leaflet.DomUtil.create("div", "leaflet-gl-layer");
+        const container = L.DomUtil.create("div", "leaflet-gl-layer");
         const size = this.getSize();
         const offset = this._map.getSize().multiplyBy(this.options.padding);
         container.style.width = `${size.x}px`;
@@ -94,11 +80,11 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
             0,
             0
         ]).subtract(offset);
-        $gXNCa$leaflet.DomUtil.setPosition(container, topLeft);
+        L.DomUtil.setPosition(container, topLeft);
     },
     _initGL: function() {
         const center = this._map.getCenter();
-        const options = $gXNCa$leaflet.extend({}, this.options, {
+        const options = L.extend({}, this.options, {
             container: this._container,
             center: [
                 center.lng,
@@ -107,7 +93,7 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
             zoom: this._map.getZoom() - 1,
             attributionControl: false
         });
-        this._glMap = new (0, ($parcel$interopDefault($gXNCa$maplibregl))).Map(options);
+        this._glMap = new (0, $h6dJ7$maplibregl).Map(options);
         // allow GL base map to pan beyond min/max latitudes
         this._glMap.transform.latRange = null;
         this._glMap.transform.maxValidLatitude = Infinity;
@@ -117,10 +103,10 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
         else this._glMap._actualCanvas = this._glMap._canvas;
         // treat child <canvas> element like L.ImageOverlay
         const canvas = this._glMap._actualCanvas;
-        $gXNCa$leaflet.DomUtil.addClass(canvas, "leaflet-image-layer");
-        $gXNCa$leaflet.DomUtil.addClass(canvas, "leaflet-zoom-animated");
-        if (this.options.interactive) $gXNCa$leaflet.DomUtil.addClass(canvas, "leaflet-interactive");
-        if (this.options.className) $gXNCa$leaflet.DomUtil.addClass(canvas, this.options.className);
+        L.DomUtil.addClass(canvas, "leaflet-image-layer");
+        L.DomUtil.addClass(canvas, "leaflet-zoom-animated");
+        if (this.options.interactive) L.DomUtil.addClass(canvas, "leaflet-interactive");
+        if (this.options.className) L.DomUtil.addClass(canvas, this.options.className);
     },
     _update: function() {
         // update the offset so we can correct for it later when we zoom
@@ -137,7 +123,7 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
             0,
             0
         ]).subtract(offset);
-        $gXNCa$leaflet.DomUtil.setPosition(container, topLeft);
+        L.DomUtil.setPosition(container, topLeft);
         this._transformGL(gl);
         if (gl.transform.width !== size.x || gl.transform.height !== size.y) {
             container.style.width = `${size.x}px`;
@@ -152,7 +138,7 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
         // gl.setView([center.lat, center.lng], this._map.getZoom() - 1, 0);
         // calling setView directly causes sync issues because it uses requestAnimFrame
         const tr = gl.transform;
-        tr.center = (0, ($parcel$interopDefault($gXNCa$maplibregl))).LngLat.convert([
+        tr.center = (0, $h6dJ7$maplibregl).LngLat.convert([
             center.lng,
             center.lat
         ]);
@@ -175,27 +161,27 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
         // https://github.com/Leaflet/Leaflet/blob/master/src/map/Map.js#L1490-L1508
         const topLeft = this._map.project(e.center, e.zoom)._subtract(viewHalf)._add(this._map._getMapPanePos().add(padding))._round();
         const offset = this._map.project(this._map.getBounds().getNorthWest(), e.zoom)._subtract(topLeft);
-        $gXNCa$leaflet.DomUtil.setTransform(this._glMap._actualCanvas, offset.subtract(this._offset), scale);
+        L.DomUtil.setTransform(this._glMap._actualCanvas, offset.subtract(this._offset), scale);
     },
     _zoomStart: function() {
         this._zooming = true;
     },
     _zoomEnd: function() {
         const scale = this._map.getZoomScale(this._map.getZoom());
-        $gXNCa$leaflet.DomUtil.setTransform(this._glMap._actualCanvas, // https://github.com/mapbox/mapbox-gl-leaflet/pull/130
+        L.DomUtil.setTransform(this._glMap._actualCanvas, // https://github.com/mapbox/mapbox-gl-leaflet/pull/130
         null, scale);
         this._zooming = false;
         this._update();
     },
     _transitionEnd: function() {
-        $gXNCa$leaflet.Util.requestAnimFrame(function() {
+        L.Util.requestAnimFrame(function() {
             const zoom = this._map.getZoom();
             const center = this._map.getCenter();
             const offset = this._map.latLngToContainerPoint(this._map.getBounds().getNorthWest());
             // reset the scale and offset
-            $gXNCa$leaflet.DomUtil.setTransform(this._glMap._actualCanvas, offset, 1);
+            L.DomUtil.setTransform(this._glMap._actualCanvas, offset, 1);
             // enable panning once the gl map is ready again
-            this._glMap.once("moveend", $gXNCa$leaflet.Util.bind(function() {
+            this._glMap.once("moveend", L.Util.bind(function() {
                 this._zoomEnd();
             }, this));
             // update the map position
@@ -209,7 +195,8 @@ const $4fa36e821943b400$var$MapLibreGL = $gXNCa$leaflet.Layer.extend({
         this._transitionEnd(e);
     }
 });
-var $4fa36e821943b400$export$2e2bcd8739ae039 = $4fa36e821943b400$var$MapLibreGL;
+var $fa5ae398b166b8de$export$2e2bcd8739ae039 = $fa5ae398b166b8de$var$MapLibreGL;
 
 
+export {$fa5ae398b166b8de$export$2e2bcd8739ae039 as default};
 //# sourceMappingURL=main.js.map

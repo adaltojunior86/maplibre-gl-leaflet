@@ -1,5 +1,6 @@
-import * as L from 'leaflet';
 import maplibregl from 'maplibre-gl';
+
+if (!window.L) throw new Error('You need add leaflet lib manually.');
 
 const MapLibreGL = L.Layer.extend({
   options: {
@@ -17,7 +18,11 @@ const MapLibreGL = L.Layer.extend({
   initialize: function (options) {
     L.setOptions(this, options);
     // setup throttling the update event when panning
-    this._throttledUpdate = L.Util.throttle(this._update, this.options.updateInterval, this);
+    this._throttledUpdate = L.Util.throttle(
+      this._update,
+      this.options.updateInterval,
+      this,
+    );
   },
 
   onAdd: function (map) {
@@ -34,13 +39,23 @@ const MapLibreGL = L.Layer.extend({
 
     // work around https://github.com/mapbox/mapbox-gl-leaflet/issues/47
     if (map.options.zoomAnimation) {
-      L.DomEvent.on(map._proxy, L.DomUtil.TRANSITION_END, this._transitionEnd, this);
+      L.DomEvent.on(
+        map._proxy,
+        L.DomUtil.TRANSITION_END,
+        this._transitionEnd,
+        this,
+      );
     }
   },
 
   onRemove: function (map) {
     if (this._map._proxy && this._map.options.zoomAnimation) {
-      L.DomEvent.off(this._map._proxy, L.DomUtil.TRANSITION_END, this._transitionEnd, this);
+      L.DomEvent.off(
+        this._map._proxy,
+        L.DomUtil.TRANSITION_END,
+        this._transitionEnd,
+        this,
+      );
     }
     const paneName = this.getPaneName();
     map.getPane(paneName).removeChild(this._container);

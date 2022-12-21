@@ -3,6 +3,9 @@
         "browser": true,
         "es2021": true
     },
+    "globals": {
+      "L": true
+    },
     "ignorePatterns": ["dist/*.js"],
     "extends": [
         "airbnb-base"

@@ -2,9 +2,9 @@
   "name": "@adaltojunior86/maplibre-gl-leaflet",
   "version": "0.0.2",
   "description": "binding from maplibre gl to the leaflet api",
-  "source": "src/index.js",
+  "source": "src/maplibre-gl.js",
   "main": "dist/main.js",
-  "type": "commonjs",
+  "type": "module",
   "scripts": {
     "build": "parcel build"
   },
